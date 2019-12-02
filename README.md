@@ -20,7 +20,7 @@ cd tower-dev/
 docker-compose -f tower-compose.yml up -d
 ```
 
-### AWX
+### AWX Setup
 
 ```bash
 # Create AWX Database Volume
@@ -33,7 +33,7 @@ cd awx
 docker-compose -f awx-compose.yml up -d
 ```
 
-### Tower
+### Tower Setup
 
 ```bash
 # Create Tower Database Volume
@@ -45,6 +45,20 @@ cd tower
 # Initialize the Tower application in the background denoted by -d
 docker-compose -f tower-compose.yml up -d
 ```
+
+### Database/Data Removal
+
+Since we created the postgres SQL data container volume by hand, we will need to remove the volume by hand if we want to "reset" our Tower instance.
+
+```bash
+# Remove Tower Database Volume
+docker volume rm tower_db
+
+# Remove AWX Database Volume
+docker volume rm awx_db
+```
+
+The reason we force you to create these volumes by hand in the first place is so that you don't accidently delete or lose track of the volume in Docker. (This keeps your compose working for the long haul).
 
 ## Authors
 
