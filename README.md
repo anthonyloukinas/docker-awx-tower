@@ -6,7 +6,19 @@ This repository is a basic docker-compose configuration that works for both AWX 
 
 For the AWX/Tower web container definitions in each respective compose file, you may want to modify the exposed HTTP port from the default "80", especially if you're planning on running multiple instances.
 
-To run multiple instances, I would for now copy the tower/awx directories into new directories, and modify the compose yaml accordingly ensuring you use different HTTP ports.
+To run multiple instances, I would for now copy the tower/awx directories into new directories, and modify the compose yaml accordingly ensuring you use different HTTP ports as well as container_names.
+
+```bash
+# Create a new tower copy
+cp -r tower/ tower-dev/
+
+# Edit container_name: and ports: "80:8052"
+vi tower-dev/tower-compose.yml
+
+# Launch new Tower environment
+cd tower-dev/
+docker-compose -f tower-compose.yml up -d
+```
 
 ### AWX
 
