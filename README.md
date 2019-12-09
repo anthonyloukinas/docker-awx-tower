@@ -61,7 +61,7 @@ tower_http_port: 80
 Run the build.yml to start the docker-compose build process
 
 ```bash
-ansible-playbook build.yml -e @tower-vars.yml
+ansible-playbook build.yml -e @install-vars.yml
 ```
 
 This playbook will prompt you for the following:
