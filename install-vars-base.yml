@@ -13,7 +13,7 @@ install_version: 3.6.1
 # Ansible AWX
 # task_image: ansible/awx_task
 # web_image: ansible/awx_web
-# install_version: 9.0
+# install_version: 9.0.1
 
 # postgres_username: postgres
 # postgres_password: postgres
