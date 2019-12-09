@@ -1,0 +1,56 @@
+---
+# @author Anthony Loukinas <anthony.loukinas@redhat.com>
+
+- hosts: localhost
+  gather_facts: no
+  vars_prompt:
+    
+    - name: tower_environment
+      prompt: Tower Environment Name
+      private: no
+      default: dev # dev, uat, prod
+
+    - name: tower_username
+      prompt: Tower Username
+      private: no
+      default: admin
+
+    - name: tower_password
+      prompt: Tower Password
+      private: no
+      default: password
+
+    - name: tower_http_port
+      prompt: Tower HTTP Port (Needs to be unique)
+      private: no
+      default: 80
+
+  tasks:
+
+    - name: Create build dir
+      file:
+        path: "{{ playbook_dir }}/build"
+        state: directory
+
+    - include_role:
+        name: generate_docker_compose
+
+    - block:    
+      - name: Create Postgres Data Volume
+        docker_volume:
+          name: "{{ tower_environment }}_db"
+          state: present
+
+      - name: Create tower network
+        docker_network:
+          name: "{{ tower_environment }}_net"
+          state: present
+      when: use_docker_modules
+
+    - block:
+      - name: Create Postgres Data Volume
+        shell: "docker volume create {{ tower_environment }}_db"
+
+      - name: Create tower network
+        shell: "docker network create {{ tower_environment }}_net"
+      when: not use_docker_modules

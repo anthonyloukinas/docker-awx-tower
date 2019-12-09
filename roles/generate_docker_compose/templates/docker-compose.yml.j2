@@ -1,0 +1,90 @@
+---
+
+version: '3'
+
+services:
+  web:
+    image: {{ web_image }}
+    container_name: {{ tower_environment }}_web
+    depends_on:
+      - rabbitmq
+      - memcached
+      - postgres
+    hostname: awx_web
+    user: root
+    restart: unless-stopped
+    ports:
+      - {{ tower_http_port }}:8052
+    volumes:
+      - "./SECRET_KEY:/etc/tower/SECRET_KEY"
+      - "./environment.sh:/etc/tower/conf.d/environment.sh"
+      - "./credentials.py:/etc/tower/conf.d/credentials.py"
+      - "./settings.py:/etc/tower/settings.py"
+    networks:
+      {{ tower_environment }}_net:
+        aliases:
+          - {{ tower_environment }}web
+
+  task:
+    image: {{ task_image }}
+    command: /usr/bin/launch_awx_task.sh
+    container_name: {{ tower_environment }}_task
+    depends_on:
+      - rabbitmq
+      - memcached
+      - postgres
+      - web
+    # https://github.com/ansible/awx/issues/86#issuecomment-331923704
+    hostname: awx
+    user: root
+    restart: unless-stopped
+    volumes:
+      - "./SECRET_KEY:/etc/tower/SECRET_KEY"
+      - "./environment.sh:/etc/tower/conf.d/environment.sh"
+      - "./credentials.py:/etc/tower/conf.d/credentials.py"
+      - "./settings.py:/etc/tower/settings.py"
+    networks:
+      {{ tower_environment }}_net:
+        aliases:
+          - {{ tower_environment }}task
+
+  rabbitmq:
+    image: ansible/awx_rabbitmq:3.7.4
+    container_name: {{ tower_environment }}_rabbitmq
+    restart: unless-stopped
+    environment:
+      RABBITMQ_DEFAULT_VHOST: "{{ install_variant }}"
+      RABBITMQ_DEFAULT_USER: "{{ rabbitmq_username }}"
+      RABBITMQ_DEFAULT_PASS: "{{ rabbitmq_password }}"
+      RABBITMQ_ERLANG_COOKIE: cookiemonster
+    networks:
+      {{ tower_environment }}_net:
+
+  memcached:
+    image: memcached:alpine
+    container_name: {{ tower_environment }}_memcached
+    restart: unless-stopped
+    networks:
+      {{ tower_environment }}_net:
+
+  postgres:
+    image: postgres:9.6
+    container_name: {{ tower_environment }}_postgres
+    restart: unless-stopped
+    volumes:
+      - {{ tower_environment }}_db:/var/lib/postgresql/data:Z
+    environment:
+      POSTGRES_USER: "{{ postgres_username }}"
+      POSTGRES_PASSWORD: "{{ postgres_password }}"
+      POSTGRES_DB: awx
+      PGDATA: /var/lib/postgresql/data/pgdata
+    networks:
+      {{ tower_environment }}_net:
+
+volumes:
+  {{ tower_environment }}_db:
+    external: true
+
+networks:
+  {{ tower_environment }}_net:
+    external: true

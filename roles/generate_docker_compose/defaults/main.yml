@@ -1,0 +1,24 @@
+---
+# @author Anthony Loukinas <anthony.loukinas@redhat.com>
+
+install_variant: tower # options: awx, tower
+install_version: 3.6.1
+
+task_image: quay.io/ansible-tower/ansible-tower
+web_image: quay.io/ansible-tower/ansible-tower
+
+tower_secret_key: aabbcc
+
+tower_username: admin
+tower_password: password
+
+tower_http_port: 80
+
+tower_environment: dev
+
+# Credentials
+rabbitmq_username: guest
+rabbitmq_password: guest
+
+postgres_username: awx
+postgres_password: postgres
