@@ -8,7 +8,7 @@ install_variant: tower # options: awx, tower
 # Ansible Tower
 task_image: quay.io/ansible-tower/ansible-tower
 web_image: quay.io/ansible-tower/ansible-tower
-install_version: 3.6.1
+install_version: 3.6.3
 
 # Ansible AWX
 # task_image: ansible/awx_task
