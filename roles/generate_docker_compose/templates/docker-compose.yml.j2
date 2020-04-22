@@ -4,7 +4,7 @@ version: '3'
 
 services:
   web:
-    image: {{ web_image }}
+    image: {{ web_image }}:{{ install_version }}
     container_name: {{ tower_environment }}_web
     depends_on:
       - rabbitmq
@@ -26,7 +26,7 @@ services:
           - {{ tower_environment }}web
 
   task:
-    image: {{ task_image }}
+    image: {{ task_image }}:{{ install_version }}
     command: /usr/bin/launch_awx_task.sh
     container_name: {{ tower_environment }}_task
     depends_on:
